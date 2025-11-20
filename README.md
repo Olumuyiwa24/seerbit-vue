@@ -8,10 +8,14 @@
 </h1>
 
 # SeerBit Checkout Wrapper for VueJS
+
 Seerbit Vue SDK can be used to integrate the SeerBit payment gateway into your Vue application.
 This module was built and tested using VueJS 3.2.13
 
+**Vue 3 Support:** This SDK is built for Vue 3.2+ and includes TypeScript definitions for better developer experience. It uses the Options API for backward compatibility, and can be used with both Options API and Composition API projects.
+
 # Requirements
+
 Register for a merchant account on [Seerbit Merchant Dashboard](https://dashboard.seerbitapi.com) to get started. \
 --> Login -> Settings menu -> API Keys menu -> Copy your public key
 
@@ -26,43 +30,54 @@ yarn add seerbit-vue
 ```
 
 ## Properties
-| Property | Type | Required | Default | Description |
-| :--- | :-- | :-- | :-- | :-- |
-| currency | <code>string</code> | Optional | NGN | The currency for the transaction e.g NGN|
-| email | <code>string</code> | Required | None | The email of the user to be charged |
-mobileNo | <code>string</code> | Optional | None | The mobile number of the user to be charged |
-| description | <code>string</code> | Optional | None | The transaction description which is optional |
-| fullName | <code>string</code> | Optional | None | The full name of the user to be charged |
-| country |  <code>string</code> | Optional | "NG" | Transaction country which can be optional |
-| tranref |  <code>string</code> | Required | None | Set a unique transaction reference for every transaction |
-| amount |  <code>string</code> | Required | None | The transaction amount in naira |
-| callbackUrl |  <code>string</code> | Optional | None | This is the redirect url when transaction is successful |
-| publicKey |  <code>string</code> | Required | None | Your Public key or see **Requirements** above to get yours |
-| closeOnSuccess |  <code>boolean</code> | Optional | False | Close checkout when trasaction is successful |
-| closePrompt |  <code>boolean</code> | Optional | False | Close the checkout page if transaction is not initiated |
-| setAmountByCustomer |  <code>boolean</code> | Optional | False | Set to true if you want user to enter transaction amount |
-| pocketRef |  <code>string</code> | Optional | None | This is your pocket reference for vendors with pocket |
-| vendorId |  <code>string</code> | Optional | None | This is the vendorId of your business using pocket |
-| tokenize |  <code>boolean</code> | Optional | False | Tokenize card |
-| planId |  <code>string</code> | Optional | None | Subcription Plan ID |
-| onCallback |  <code>Method</code> | Optional | None | Callback method if transaction was successful |
-| onCloseCheckout |  <code>Method</code> | Optional | None | Callback method if transaction was cancelled |
-| buttonText | <code>String</code> | Optional | Pay With SeerBit | Text to be displayed on launch button
-| autoCheckout | <code>boolean</code> | Optional | false | Launch checkout automatically if true, or display a pay button if false
-| customization |  <code>Object</code> | Optional | None | Customization e.g below
+
+| Property            | Type                 | Required | Default          | Description                                                                                                                                                               |
+| :------------------ | :------------------- | :------- | :--------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| currency            | <code>string</code>  | Optional | NGN              | The currency for the transaction e.g NGN                                                                                                                                  |
+| email               | <code>string</code>  | Required | None             | The email of the user to be charged                                                                                                                                       |
+| mobileNo            | <code>string</code>  | Optional | None             | The mobile number of the user to be charged                                                                                                                               |
+| description         | <code>string</code>  | Optional | None             | The transaction description which is optional                                                                                                                             |
+| fullName            | <code>string</code>  | Optional | None             | The full name of the user to be charged                                                                                                                                   |
+| country             | <code>string</code>  | Optional | "NG"             | Transaction country which can be optional                                                                                                                                 |
+| tranref             | <code>string</code>  | Required | None             | Set a unique transaction reference for every transaction                                                                                                                  |
+| amount              | <code>string</code>  | Required | None             | The transaction amount in naira                                                                                                                                           |
+| callbackUrl         | <code>string</code>  | Optional | None             | This is the redirect url when transaction is successful                                                                                                                   |
+| publicKey           | <code>string</code>  | Required | None             | Your Public key or see **Requirements** above to get yours                                                                                                                |
+| closeOnSuccess      | <code>boolean</code> | Optional | False            | Close checkout when trasaction is successful                                                                                                                              |
+| closePrompt         | <code>boolean</code> | Optional | False            | Close the checkout page if transaction is not initiated                                                                                                                   |
+| dynamicSplit        | <code>Array</code>   | Optional | []               | Array of split rules to distribute payment across multiple accounts. Each rule should have `accountId` (string) and `percentage` (number). Percentages must add up to 100 |
+| setAmountByCustomer | <code>boolean</code> | Optional | False            | Set to true if you want user to enter transaction amount                                                                                                                  |
+| pocketRef           | <code>string</code>  | Optional | None             | This is your pocket reference for vendors with pocket                                                                                                                     |
+| vendorId            | <code>string</code>  | Optional | None             | This is the vendorId of your business using pocket                                                                                                                        |
+| tokenize            | <code>boolean</code> | Optional | False            | Tokenize card                                                                                                                                                             |
+| planId              | <code>string</code>  | Optional | None             | Subcription Plan ID                                                                                                                                                       |
+| onCallback          | <code>Method</code>  | Optional | None             | Callback method if transaction was successful                                                                                                                             |
+| onCloseCheckout     | <code>Method</code>  | Optional | None             | Callback method if transaction was cancelled                                                                                                                              |
+| buttonText          | <code>String</code>  | Optional | Pay With SeerBit | Text to be displayed on launch button                                                                                                                                     |
+| autoCheckout        | <code>boolean</code> | Optional | false            | Launch checkout automatically if true, or display a pay button if false                                                                                                   |
+| customization       | <code>Object</code>  | Optional | None             | Customization e.g below                                                                                                                                                   |
 
 ```vue
-customization: {
-  theme: {
-    border_color: "#000000",
-    background_color: "#004C64",
-    button_color: "#0084A0",
-  },
-  payment_method: ["card", "account", "transfer", "wallet", "ussd"],
-  display_fee: true,
-  logo: "logo_url | base64",
-}
+customization: { theme: { border_color: "#000000", background_color: "#004C64",
+button_color: "#0084A0", }, payment_method: ["card", "account", "transfer",
+"wallet", "ussd"], display_fee: true, logo: "logo_url | base64", }
 ```
+
+## TypeScript Support
+
+This SDK includes TypeScript type definitions for enhanced developer experience.
+
+### TypeScript Usage Example
+
+````typescript
+import { ref } from 'vue'
+import type { DynamicSplitRule } from 'seerbit-vue'
+
+
+const splits: DynamicSplitRule[] = [
+  { accountId: 'acct_merchant_001', percentage: 70 },
+  { accountId: 'acct_platform_002', percentage: 30 }
+]
 
 ## Usage
 
@@ -86,6 +101,11 @@ export default {
       pocketRef: "",
       tokenize: "",
       currency: "NGN",
+
+      dynamicSplit: [
+        { accountId: "acct_merchant_123", percentage: 70 },
+        { accountId: "acct_platform_456", percentage: 30 }
+      ]
       customization: {
         theme: {
           border_color: "#000000",
@@ -135,6 +155,7 @@ export default {
       :currency="currency"
       :mobileNo="mobileNo"
       :buttonText="buttonText"
+      :dynamicSplit="dynamicSplit"
     />
   </div>
 </template>
@@ -144,7 +165,7 @@ export default {
     align-self: center;
     background-color: #000000;
     color: #ffffff;
-    font-weight: 400; 
+    font-weight: 400;
     cursor: pointer;
     justify-content: center;
     align-items: center;
@@ -152,7 +173,7 @@ export default {
     font-size: 16px;
   }
 </style>
-```
+````
 
 ## License
 

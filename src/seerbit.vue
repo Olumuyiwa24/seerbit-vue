@@ -82,6 +82,14 @@ export default {
         return {};
       }
     },
+    //new props for dynamic split added by yours successfully
+    dynamicSplit: {
+      type: Array,
+      required: false,
+      default: function () {
+        return [];
+      },
+    },
     callbackurl: {
       type: String,
       default: ""
@@ -144,7 +152,32 @@ export default {
         }
       }
     },
+
+    // New method to validate dynamic split percentages added by Muyiwa
+    validateDynamicSplit() {
+      if (this.dynamicSplit && this.dynamicSplit.length > 0) {
+        const totalPercentage = this.dynamicSplit.reduce((sum, split) => {
+          return sum + (split.percentage || 0);
+        }, 0);
+
+        if (totalPercentage !== 100) {
+          console.warn(
+            `SeerBit Warning: Dynamic split percentages must add up to 100. Current total: ${totalPercentage}`
+          );
+          return false;
+        }
+      }
+      return true;
+    },
+
     SeerBitCheckout() {
+      // Validate dynamic split before proceeding added by Muyiwa
+      if (this.dynamicSplit && this.dynamicSplit.length > 0) {
+        if (!this.validateDynamicSplit()) {
+          console.error("SeerBit: Invalid dynamic split configuration");
+          return;
+        }
+      }
       this.scriptLoaded &&
       this.scriptLoaded.then(() => {
         const checkoutOptions = {
@@ -166,7 +199,8 @@ export default {
           tokenize: this.tokenize,
           pocketRef: this.pocketRef,
           planId: this.planId,
-          closePrompt: this.closePrompt
+          closePrompt: this.closePrompt,
+          dynamicSplit: this.dynamicSplit,
         };
 
         window.SeerbitPay(checkoutOptions, this.onCallback, this.onCloseCheckout);
