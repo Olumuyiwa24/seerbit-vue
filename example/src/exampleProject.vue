@@ -23,10 +23,16 @@ export default {
           background_color: "#004C64",
           button_color: "#0084A0",
         },
+        
         payment_method: ["card", "account", "transfer", "wallet", "ussd"],
         display_fee: true, 
         logo: "logo_url | base64",
       },
+      dynamicSplit: [
+        { accountId: "acct_12345", percentage: 40 },
+        { accountId: "acct_67890", percentage: 30 },
+        { accountId: "acct_67899", percentage: 30 },
+      ],
       callbackurl: "",
       buttonText: "Pay With SeerBit",
       autoCheckout: false,
@@ -68,6 +74,7 @@ export default {
       :mobileNo="mobileNo"
       :buttonText="buttonText"
       :autoCheckout="false"
+      :dynamicSplit="dynamicSplit"
     />
   </div>
 </template>
