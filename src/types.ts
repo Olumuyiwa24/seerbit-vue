@@ -1,8 +1,15 @@
 
 
+export interface DynamicSplitItem {
+  subAccountCode: string;
+  subAccountName?: string; 
+  value: string;
+}
+
 export interface DynamicSplitRule {
-  accountId: string;
-  percentage: number;
+  type: "FLAT" | "PERCENTAGE";
+  transactionFee: "SUB_ACCOUNT" | "ALL_ACCOUNTS" | "PROPORTIONATE" | "PARENT_ACCOUNT";
+  items: DynamicSplitItem[];
 }
 
 export interface CustomizationTheme {
@@ -42,5 +49,5 @@ export interface SeerbitCheckoutProps {
   onCallback: (response: any) => void;
   onCloseCheckout: () => void;
   autoCheckout?: boolean;
-  dynamicSplit?: DynamicSplitRule[];
+  dynamicSplit?: DynamicSplitRule;
 }

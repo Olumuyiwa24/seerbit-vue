@@ -31,31 +31,33 @@ yarn add seerbit-vue
 
 ## Properties
 
-| Property            | Type                 | Required | Default          | Description                                                                                                                                                               |
-| :------------------ | :------------------- | :------- | :--------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| currency            | <code>string</code>  | Optional | NGN              | The currency for the transaction e.g NGN                                                                                                                                  |
-| email               | <code>string</code>  | Required | None             | The email of the user to be charged                                                                                                                                       |
-| mobileNo            | <code>string</code>  | Optional | None             | The mobile number of the user to be charged                                                                                                                               |
-| description         | <code>string</code>  | Optional | None             | The transaction description which is optional                                                                                                                             |
-| fullName            | <code>string</code>  | Optional | None             | The full name of the user to be charged                                                                                                                                   |
-| country             | <code>string</code>  | Optional | "NG"             | Transaction country which can be optional                                                                                                                                 |
-| tranref             | <code>string</code>  | Required | None             | Set a unique transaction reference for every transaction                                                                                                                  |
-| amount              | <code>string</code>  | Required | None             | The transaction amount in naira                                                                                                                                           |
-| callbackUrl         | <code>string</code>  | Optional | None             | This is the redirect url when transaction is successful                                                                                                                   |
-| publicKey           | <code>string</code>  | Required | None             | Your Public key or see **Requirements** above to get yours                                                                                                                |
-| closeOnSuccess      | <code>boolean</code> | Optional | False            | Close checkout when trasaction is successful                                                                                                                              |
-| closePrompt         | <code>boolean</code> | Optional | False            | Close the checkout page if transaction is not initiated                                                                                                                   |
-| dynamicSplit        | <code>Array</code>   | Optional | []               | Array of split rules to distribute payment across multiple accounts. Each rule should have `accountId` (string) and `percentage` (number). Percentages must add up to 100 |
-| setAmountByCustomer | <code>boolean</code> | Optional | False            | Set to true if you want user to enter transaction amount                                                                                                                  |
-| pocketRef           | <code>string</code>  | Optional | None             | This is your pocket reference for vendors with pocket                                                                                                                     |
-| vendorId            | <code>string</code>  | Optional | None             | This is the vendorId of your business using pocket                                                                                                                        |
-| tokenize            | <code>boolean</code> | Optional | False            | Tokenize card                                                                                                                                                             |
-| planId              | <code>string</code>  | Optional | None             | Subcription Plan ID                                                                                                                                                       |
-| onCallback          | <code>Method</code>  | Optional | None             | Callback method if transaction was successful                                                                                                                             |
-| onCloseCheckout     | <code>Method</code>  | Optional | None             | Callback method if transaction was cancelled                                                                                                                              |
-| buttonText          | <code>String</code>  | Optional | Pay With SeerBit | Text to be displayed on launch button                                                                                                                                     |
-| autoCheckout        | <code>boolean</code> | Optional | false            | Launch checkout automatically if true, or display a pay button if false                                                                                                   |
-| customization       | <code>Object</code>  | Optional | None             | Customization e.g below                                                                                                                                                   |
+| Property       | Type                 | Required | Default | Description                                                |
+| :------------- | :------------------- | :------- | :------ | :--------------------------------------------------------- |
+| currency       | <code>string</code>  | Optional | NGN     | The currency for the transaction e.g NGN                   |
+| email          | <code>string</code>  | Required | None    | The email of the user to be charged                        |
+| mobileNo       | <code>string</code>  | Optional | None    | The mobile number of the user to be charged                |
+| description    | <code>string</code>  | Optional | None    | The transaction description which is optional              |
+| fullName       | <code>string</code>  | Optional | None    | The full name of the user to be charged                    |
+| country        | <code>string</code>  | Optional | "NG"    | Transaction country which can be optional                  |
+| tranref        | <code>string</code>  | Required | None    | Set a unique transaction reference for every transaction   |
+| amount         | <code>string</code>  | Required | None    | The transaction amount in naira                            |
+| callbackUrl    | <code>string</code>  | Optional | None    | This is the redirect url when transaction is successful    |
+| publicKey      | <code>string</code>  | Required | None    | Your Public key or see **Requirements** above to get yours |
+| closeOnSuccess | <code>boolean</code> | Optional | False   | Close checkout when trasaction is successful               |
+| closePrompt    | <code>boolean</code> | Optional | False   | Close the checkout page if transaction is not initiated    |
+
+| split | <code>Object</code> | Optional | {} | Payment split configuration object with `type` ("FLAT" or "PERCENTAGE"), `transactionFee` ("SUB_ACCOUNT", "ALL_ACCOUNTS", "PROPORTIONATE", or "PARENT_ACCOUNT"), and `items` array. Each item requires `subAccountCode` (string) and `value` (string), with optional `subAccountName` |
+
+| setAmountByCustomer | <code>boolean</code> | Optional | False | Set to true if you want user to enter transaction amount |
+| pocketRef | <code>string</code> | Optional | None | This is your pocket reference for vendors with pocket |
+| vendorId | <code>string</code> | Optional | None | This is the vendorId of your business using pocket |
+| tokenize | <code>boolean</code> | Optional | False | Tokenize card |
+| planId | <code>string</code> | Optional | None | Subcription Plan ID |
+| onCallback | <code>Method</code> | Optional | None | Callback method if transaction was successful |
+| onCloseCheckout | <code>Method</code> | Optional | None | Callback method if transaction was cancelled |
+| buttonText | <code>String</code> | Optional | Pay With SeerBit | Text to be displayed on launch button |
+| autoCheckout | <code>boolean</code> | Optional | false | Launch checkout automatically if true, or display a pay button if false |
+| customization | <code>Object</code> | Optional | None | Customization e.g below |
 
 ```vue
 customization: { theme: { border_color: "#000000", background_color: "#004C64",
@@ -74,10 +76,22 @@ import { ref } from 'vue'
 import type { DynamicSplitRule } from 'seerbit-vue'
 
 
-const splits: DynamicSplitRule[] = [
-  { accountId: 'acct_merchant_001', percentage: 70 },
-  { accountId: 'acct_platform_002', percentage: 30 }
-]
+const splits: DynamicSplitRule = {
+  type: "FLAT", // or "PERCENTAGE"
+  transactionFee: "SUB_ACCOUNT", // or "ALL_ACCOUNTS", "PROPORTIONATE", "PARENT_ACCOUNT"
+  items: [
+    {
+      subAccountCode: "imshia-uba-programme-Qx7aL9",
+      subAccountName: "", // optional
+      value: "3.01"
+    },
+    {
+      subAccountCode: "ops-costs-2sD4kA",
+      subAccountName: "" // optional
+      value: "2.00"
+    }
+  ]
+}
 
 ## Usage
 
@@ -102,10 +116,22 @@ export default {
       tokenize: "",
       currency: "NGN",
 
-      dynamicSplit: [
-        { accountId: "acct_merchant_123", percentage: 70 },
-        { accountId: "acct_platform_456", percentage: 30 }
-      ]
+      split: {
+        type: "FLAT", // or "PERCENTAGE"
+        transactionFee: "SUB_ACCOUNT", // or "ALL_ACCOUNTS", "PROPORTIONATE", "PARENT_ACCOUNT"
+        items: [
+          {
+            subAccountCode: "imshia-uba-programme-Qx7aL9",
+            subAccountName: "", // optional
+            value: "3.01"
+          },
+          {
+            subAccountCode: "ops-costs-2sD4kA",
+            subAccountName: "" // optional
+            value: "2.00"
+          }
+        ]
+      },
       customization: {
         theme: {
           border_color: "#000000",
@@ -155,7 +181,7 @@ export default {
       :currency="currency"
       :mobileNo="mobileNo"
       :buttonText="buttonText"
-      :dynamicSplit="dynamicSplit"
+      :split="split"
     />
   </div>
 </template>

@@ -1,5 +1,15 @@
-<script type="text/javascript">
+
+<script lang="ts">
+import { PropType } from 'vue';
+import { DynamicSplitRule } from './types';
 import SeerBitButton from './seerbitButton.vue';
+
+declare global {
+  interface Window {
+    SeerbitPay: (options: any, callback: Function, closeCallback: Function) => void;
+  }
+}
+
 export default {
   name:"SeerBitCheckout",
   components: {
@@ -82,13 +92,11 @@ export default {
         return {};
       }
     },
-    //new props for dynamic split added by yours successfully
-    dynamicSplit: {
-      type: Array,
+    //new props for dynamic split 
+    split: {
+      type: Object as PropType<DynamicSplitRule>,
       required: false,
-      default: function () {
-        return [];
-      },
+      default: () => ({})
     },
     callbackurl: {
       type: String,
@@ -116,7 +124,7 @@ export default {
     };
   },
   created() {
-    this.scriptLoaded = new Promise(resolve => {
+    this.scriptLoaded = new Promise<void>(resolve => {
       this.loadScript(() => {
         resolve();
       });
@@ -132,14 +140,14 @@ export default {
       const script = document.createElement("script");
       script.src = `https://checkout.seerbitapi.com/api/v${this.version}/seerbit.js`;
       document.getElementsByTagName("head")[0].appendChild(script);
-      if (script.readyState) {
+      if ((script as any).readyState) {
         // IE
-        script.onreadystatechange = () => {
+        (script as any).onreadystatechange = () => {
           if (
-            script.readyState === "loaded" ||
-            script.readyState === "complete"
+            (script as any).readyState === "loaded" ||
+            (script as any).readyState === "complete"
           ) {
-            script.onreadystatechange = null;
+            (script as any).onreadystatechange = null;
             callback();
           }
         };
@@ -153,26 +161,60 @@ export default {
       }
     },
 
-    // New method to validate dynamic split percentages added by Muyiwa
+    // New method to validate dynamic split
     validateDynamicSplit() {
-      if (this.dynamicSplit && this.dynamicSplit.length > 0) {
-        const totalPercentage = this.dynamicSplit.reduce((sum, split) => {
-          return sum + (split.percentage || 0);
-        }, 0);
+    if (this.split) {
+      if (!this.split.type) {
+        console.error('SeerBit Error: split.type is required');
+        return false;
+      }
 
-        if (totalPercentage !== 100) {
-          console.warn(
-            `SeerBit Warning: Dynamic split percentages must add up to 100. Current total: ${totalPercentage}`
-          );
+      if (this.split.type !== 'FLAT' && this.split.type !== 'PERCENTAGE') {
+        console.error('SeerBit Error: split.type must be either "FLAT" or "PERCENTAGE"');
+        return false;
+      }
+
+      if (!this.split.transactionFee) {
+        console.error('SeerBit Error: split.transactionFee is required');
+        return false;
+      }
+
+      const validTransactionFees = ['SUB_ACCOUNT', 'ALL_ACCOUNTS', 'PROPORTIONATE', 'PARENT_ACCOUNT'];
+      if (!validTransactionFees.includes(this.split.transactionFee)) {
+        console.error('SeerBit Error: split.transactionFee must be one of: SUB_ACCOUNT, ALL_ACCOUNTS, PROPORTIONATE, PARENT_ACCOUNT');
+        return false;
+      }
+
+      if (!this.split.items || !Array.isArray(this.split.items) || this.split.items.length === 0) {
+        console.error('SeerBit Error: split.items is required and must be a non-empty array');
+        return false;
+      }
+
+      for (let i = 0; i < this.split.items.length; i++) {
+        const item = this.split.items[i];
+
+        if (!item.subAccountCode) {
+          console.error(`SeerBit Error: split.items[${i}].subAccountCode is required`);
+          return false;
+        }
+
+        if (!item.value) {
+          console.error(`SeerBit Error: split.items[${i}].value is required`);
+          return false;
+        }
+
+        if (isNaN(parseFloat(item.value))) {
+          console.error(`SeerBit Error: split.items[${i}].value must be a valid number`);
           return false;
         }
       }
-      return true;
-    },
+    }
+  
+  return true;
+},
 
     SeerBitCheckout() {
-      // Validate dynamic split before proceeding added by Muyiwa
-      if (this.dynamicSplit && this.dynamicSplit.length > 0) {
+      if (this.split) {
         if (!this.validateDynamicSplit()) {
           console.error("SeerBit: Invalid dynamic split configuration");
           return;
@@ -200,7 +242,7 @@ export default {
           pocketRef: this.pocketRef,
           planId: this.planId,
           closePrompt: this.closePrompt,
-          dynamicSplit: this.dynamicSplit,
+          split: this.split,
         };
 
         window.SeerbitPay(checkoutOptions, this.onCallback, this.onCloseCheckout);
