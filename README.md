@@ -46,7 +46,14 @@ yarn add seerbit-vue
 | closeOnSuccess | <code>boolean</code> | Optional | False   | Close checkout when trasaction is successful               |
 | closePrompt    | <code>boolean</code> | Optional | False   | Close the checkout page if transaction is not initiated    |
 
-| split | <code>Object</code> | Optional | {} | Payment split configuration object with `type` ("FLAT" or "PERCENTAGE"), `transactionFee` ("SUB_ACCOUNT", "ALL_ACCOUNTS", "PROPORTIONATE", or "PARENT_ACCOUNT"), and `items` array. Each item requires `subAccountCode` (string) and `value` (string), with optional `subAccountName` |
+```vue
+| split |
+<code>Object</code>
+| Optional | {} | Payment split configuration object with `type` ("FLAT" or
+"PERCENTAGE"), `transactionFee` ("SUB_ACCOUNT", "ALL_ACCOUNTS", "PROPORTIONATE",
+or "PARENT_ACCOUNT"), and `items` array. Each item requires `subAccountCode`
+(string) and `value` (string), with optional `subAccountName` |
+```
 
 | setAmountByCustomer | <code>boolean</code> | Optional | False | Set to true if you want user to enter transaction amount |
 | pocketRef | <code>string</code> | Optional | None | This is your pocket reference for vendors with pocket |
@@ -71,7 +78,7 @@ This SDK includes TypeScript type definitions for enhanced developer experience.
 
 ### TypeScript Usage Example
 
-````typescript
+```typescript
 import { ref } from 'vue'
 import type { DynamicSplitRule } from 'seerbit-vue'
 
@@ -92,6 +99,7 @@ const splits: DynamicSplitRule = {
     }
   ]
 }
+```
 
 ## Usage
 
@@ -187,19 +195,19 @@ export default {
 </template>
 
 <style>
-  .seerbitButton {
-    align-self: center;
-    background-color: #000000;
-    color: #ffffff;
-    font-weight: 400;
-    cursor: pointer;
-    justify-content: center;
-    align-items: center;
-    border-radius: 10px;
-    font-size: 16px;
-  }
+.seerbitButton {
+  align-self: center;
+  background-color: #000000;
+  color: #ffffff;
+  font-weight: 400;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  font-size: 16px;
+}
 </style>
-````
+```
 
 ## License
 
